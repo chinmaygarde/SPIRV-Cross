@@ -370,19 +370,19 @@ void CompilerCPP::emit_c_linkage()
 {
 	statement("");
 
-	statement("spirv_cross_shader_t *spirv_cross_construct(void)");
+	statement("static spirv_cross_shader_t *spirv_cross_construct(void)");
 	begin_scope();
 	statement("return new ", impl_type, "();");
 	end_scope();
 
 	statement("");
-	statement("void spirv_cross_destruct(spirv_cross_shader_t *shader)");
+	statement("static void spirv_cross_destruct(spirv_cross_shader_t *shader)");
 	begin_scope();
 	statement("delete static_cast<", impl_type, "*>(shader);");
 	end_scope();
 
 	statement("");
-	statement("void spirv_cross_invoke(spirv_cross_shader_t *shader)");
+	statement("static void spirv_cross_invoke(spirv_cross_shader_t *shader)");
 	begin_scope();
 	statement("static_cast<", impl_type, "*>(shader)->invoke();");
 	end_scope();

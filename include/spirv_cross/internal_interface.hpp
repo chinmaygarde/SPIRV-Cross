@@ -571,34 +571,4 @@ inline T atomicAdd(T &v, T a)
 }
 }
 
-void spirv_cross_set_stage_input(spirv_cross_shader_t *shader, unsigned location, void *data, size_t size)
-{
-	shader->set_stage_input(location, data, size);
-}
-
-void spirv_cross_set_stage_output(spirv_cross_shader_t *shader, unsigned location, void *data, size_t size)
-{
-	shader->set_stage_output(location, data, size);
-}
-
-void spirv_cross_set_uniform_constant(spirv_cross_shader_t *shader, unsigned location, void *data, size_t size)
-{
-	shader->set_uniform_constant(location, data, size);
-}
-
-void spirv_cross_set_resource(spirv_cross_shader_t *shader, unsigned set, unsigned binding, void **data, size_t size)
-{
-	shader->set_resource(set, binding, data, size);
-}
-
-void spirv_cross_set_push_constant(spirv_cross_shader_t *shader, void *data, size_t size)
-{
-	shader->set_push_constant(data, size);
-}
-
-void spirv_cross_set_builtin(spirv_cross_shader_t *shader, spirv_cross_builtin builtin, void *data, size_t size)
-{
-	shader->set_builtin(builtin, data, size);
-}
-
 #endif
