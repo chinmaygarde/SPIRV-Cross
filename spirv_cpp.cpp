@@ -23,6 +23,8 @@
 
 #include "spirv_cpp.hpp"
 
+#include <sstream>
+
 using namespace spv;
 using namespace SPIRV_CROSS_NAMESPACE;
 using namespace std;
@@ -356,6 +358,9 @@ string CompilerCPP::compile()
 	end_scope_decl();
 	// namespace
 	end_scope();
+	if (!interface_name.empty()) {
+		end_scope();
+	}
 
 	// Emit C entry points
 	emit_c_linkage();
@@ -497,6 +502,13 @@ void CompilerCPP::emit_header()
 	statement("using namespace glm;");
 	statement("");
 
+	if (!interface_name.empty()) {
+		std::stringstream stream;
+		stream << "namespace " << interface_name << "_ns";
+		statement(stream.str());
+		begin_scope();
+	}
+
 	statement("namespace Impl");
 	begin_scope();
 
@@ -516,20 +528,37 @@ void CompilerCPP::emit_header()
 		SPIRV_CROSS_THROW("Unsupported execution model.");
 	}
 
+  auto to_impl_type = [iname = interface_name](const std::string& name, const std::string& t1, const std::string& t2){
+  	std::stringstream ns;
+  	if (!iname.empty()) {
+  		ns << iname << "_ns::" ;
+  	}
+  	std::stringstream stream;
+  	stream << name;
+  	stream << "<";
+  	stream << ns.str();
+  	stream << t1;
+  	stream << ", ";
+  	stream << ns.str();
+  	stream << t2;
+  	stream << ">";
+  	return stream.str();
+  };
+
 	switch (execution.model)
 	{
 	case ExecutionModelGeometry:
-		impl_type = "GeometryShader<Impl::Shader, Impl::Shader::Resources>";
+		impl_type = to_impl_type("GeometryShader", "Impl::Shader", "Impl::Shader::Resources");
 		resource_type = "GeometryResources";
 		break;
 
 	case ExecutionModelVertex:
-		impl_type = "VertexShader<Impl::Shader, Impl::Shader::Resources>";
+		impl_type = to_impl_type("VertexShader", "Impl::Shader", "Impl::Shader::Resources");
 		resource_type = "VertexResources";
 		break;
 
 	case ExecutionModelFragment:
-		impl_type = "FragmentShader<Impl::Shader, Impl::Shader::Resources>";
+		impl_type = to_impl_type("FragmentShader", "Impl::Shader", "Impl::Shader::Resources");
 		resource_type = "FragmentResources";
 		break;
 
